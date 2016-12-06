@@ -1,0 +1,31 @@
+{
+    "uuid": "a78f915b-d723-8c0d-4884-50b9b040a06f",
+    "name": "lunch",
+    "icon": "cutlery",
+    "color": "pink",
+    "schedules": [
+        {
+            "days": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "time": "12:00 pm",
+            "idx": "1200"
+        }
+    ],
+    "homework": [
+        {
+            "details": "make sandwich",
+            "due": 1481011200000,
+            "submittable": true,
+            "id": 1481000627645,
+            "done": false,
+            "completed": false,
+            "cid": 1481000576040
+        }
+    ],
+    "id": 1481000576040
+}

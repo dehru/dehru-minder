@@ -4,7 +4,7 @@ var bodyParser = require("body-parser");
 var mongodb = require("mongodb");
 var ObjectID = mongodb.ObjectID;
 
-var CONTACTS_COLLECTION = "contacts";
+var COURSES_COLLECTION = "courses";
 
 var app = express();
 app.use(express.static(__dirname + "/public"));
@@ -31,8 +31,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
     });
 });
 
-// CONTACTS API ROUTES BELOW
-// CONTACTS API ROUTES BELOW
+// COURSES API ROUTES BELOW
 
 // Generic error handler used by all endpoints.
 function handleError(res, reason, message, code) {
@@ -40,23 +39,24 @@ function handleError(res, reason, message, code) {
     res.status(code || 500).json({"error": message});
 }
 
-/*  "/contacts"
- *    GET: finds all contacts
+/*  "/courses"
+ *    GET: finds all courses
  *    POST: creates a new contact
  */
 
-app.get("/contacts", function(req, res) {
+app.get("/courses/:uuid", function(req, res) {
 });
 
-app.post("/contacts", function(req, res) {
-    var newContact = req.body;
-    newContact.createDate = new Date();
+app.post("/courses/:uuid", function(req, res) {
+    var newCourse = req.body;
+    newCourse.createDate = new Date();
+    newCourse.uuid = req.uuid;
 
-    if (!(req.body.firstName || req.body.lastName)) {
-        handleError(res, "Invalid user input", "Must provide a first or last name.", 400);
+    if (!(req.body.name || req.body.icon)) {
+        handleError(res, "Invalid user input", "Must provide a name and icon.", 400);
     }
 
-    db.collection(CONTACTS_COLLECTION).insertOne(newContact, function(err, doc) {
+    db.collection(COURSES_COLLECTION).insertOne(newCourse, function(err, doc) {
         if (err) {
             handleError(res, err.message, "Failed to create new contact.");
         } else {
@@ -65,17 +65,25 @@ app.post("/contacts", function(req, res) {
     });
 });
 
-/*  "/contacts/:id"
+/*  "/courses/:id"
  *    GET: find contact by id
  *    PUT: update contact by id
  *    DELETE: deletes contact by id
  */
 
-app.get("/contacts/:id", function(req, res) {
+app.get("/courses/:uuid", function(req, res) {
+    db.collection(COURSES_COLLECTION).find(req.uuid, function(err, doc) {
+        if (err) {
+            handleError(res, err.message, "Failed to create new contact.");
+        } else {
+            res.status(200).json(doc);
+        }
+    });
+    
 });
 
-app.put("/contacts/:id", function(req, res) {
+app.put("/courses/:id", function(req, res) {
 });
 
-app.delete("/contacts/:id", function(req, res) {
+app.delete("/courses/:id", function(req, res) {
 });
