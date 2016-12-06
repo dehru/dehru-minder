@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 var db;
 
 // Connect to the database before starting the application server.
-mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
+mongodb.MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/minder', function (err, database) {
     if (err) {
         console.log(err);
         process.exit(1);
@@ -45,12 +45,25 @@ function handleError(res, reason, message, code) {
  */
 
 app.get("/courses/:uuid", function(req, res) {
+
+    db.collection(COURSES_COLLECTION).find({uuid:req.params.uuid}).toArray(function(err, docs) {
+        if (err) {
+            handleError(res, err.message, "Failed to get courses.");
+        } else {
+            res.status(200).json(docs);
+        }
+    });
+
 });
 
 app.post("/courses/:uuid", function(req, res) {
     var newCourse = req.body;
     newCourse.createDate = new Date();
-    newCourse.uuid = req.uuid;
+    newCourse.uuid = req.params.uuid;
+
+    console.log("Course", newCourse);
+
+    console.log("body", req.body);
 
     if (!(req.body.name || req.body.icon)) {
         handleError(res, "Invalid user input", "Must provide a name and icon.", 400);
@@ -65,22 +78,6 @@ app.post("/courses/:uuid", function(req, res) {
     });
 });
 
-/*  "/courses/:id"
- *    GET: find contact by id
- *    PUT: update contact by id
- *    DELETE: deletes contact by id
- */
-
-app.get("/courses/:uuid", function(req, res) {
-    db.collection(COURSES_COLLECTION).find(req.uuid, function(err, doc) {
-        if (err) {
-            handleError(res, err.message, "Failed to create new contact.");
-        } else {
-            res.status(200).json(doc);
-        }
-    });
-    
-});
 
 app.put("/courses/:id", function(req, res) {
 });
